@@ -1,0 +1,19 @@
+name: Auto News
+on:
+  schedule:
+    - cron: '0 */4 * * *'
+  workflow_dispatch:
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Fetch News
+      run: |
+        curl "https://api.rss2json.com/v1/api.json?rss_url=https://feeds.feedburner.com/aajtak&api_key=${{ secrets.RSS_API_KEY }}" > news.json
+    - name: Commit
+      run: |
+        git config --global user.name "Bot"
+        git add .
+        git commit -m "Auto: $(date)"
+        git push
